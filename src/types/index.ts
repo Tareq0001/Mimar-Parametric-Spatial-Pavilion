@@ -12,7 +12,13 @@ export interface CityInfo {
   climateEn: string;
 }
 
-export type GeometryType = 'sinusoidal_canopy' | 'twisted_torus' | 'catenary_vault' | 'geodesic_shell';
+export type GeometryType = 
+  | 'muqarnas_vault' 
+  | 'muqarnas_dome' 
+  | 'sinusoidal_canopy' 
+  | 'twisted_torus' 
+  | 'catenary_vault' 
+  | 'geodesic_shell';
 
 export interface ParametricParams {
   formType: GeometryType;
@@ -22,6 +28,7 @@ export interface ParametricParams {
   heightAmplitude: number; // 4 to 22 meters
   rippleFreq: number;      // 1 to 8 waves
   ribThickness: number;    // 0.2 to 2.0 meters
+  muqarnasTiers?: number;  // 3 to 8 stalactite corbelling tiers
   wireframe: boolean;
   showSkeleton: boolean;
   feaStressMode: boolean;
@@ -41,9 +48,12 @@ export interface KineticParams {
 }
 
 export type MaterialKey = 
+  | 'carrara_marble'
+  | 'desert_onyx'
+  | 'alula_sandstone'
+  | 'rose_gold_titanium'
+  | 'brushed_bronze'
   | 'concrete_brutalist' 
-  | 'desert_sandstone' 
-  | 'brushed_bronze' 
   | 'cyber_titanium' 
   | 'low_iron_glass' 
   | 'biopolymer_membrane';

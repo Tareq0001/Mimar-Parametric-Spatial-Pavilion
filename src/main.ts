@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import { OBJExporter } from 'three/examples/jsm/exporters/OBJExporter.js';
+import confetti from 'canvas-confetti';
 import { SceneManager } from './engine/sceneManager';
 import { ParametricMeshGenerator, ParametricMeshOutput } from './engine/parametricMesh';
 import { KineticFacadeSystem } from './engine/kineticFacade';
@@ -19,12 +21,60 @@ import {
   PresetModel
 } from './types';
 
-// Preset configurations
+// Royal Architectural Preset configurations
 const PRESETS: Record<string, PresetModel> = {
+  muqarnas_royal: {
+    id: 'muqarnas_royal',
+    nameAr: 'قصر المقرنصات الملكي | رخام كرارا الماسي',
+    nameEn: 'Royal Muqarnas Pavilion | Carrara Marble',
+    descAr: 'قبو مقرنصات أيقوني مستوحى من قصر الحمراء بأعمدة رخامية وأقواس إسلامية حمالة مع بركة ماء عاكسة.',
+    descEn: 'Monumental Islamic vault with fluted marble colonnade and tranquil reflecting water basin.',
+    city: 'alula',
+    geometry: {
+      formType: 'muqarnas_vault',
+      ribCount: 36,
+      twistAngle: 0,
+      spanRadius: 28,
+      heightAmplitude: 14,
+      rippleFreq: 3,
+      ribThickness: 0.8,
+      muqarnasTiers: 5,
+      wireframe: false,
+      showSkeleton: true,
+      feaStressMode: false
+    },
+    material: 'carrara_marble',
+    kineticMode: 'solar_tracking',
+    timeOfDay: 13.5
+  },
+  muqarnas_dome: {
+    id: 'muqarnas_dome',
+    nameAr: 'قبة النور والعين السماوية | أونيكس الصحراء',
+    nameEn: 'Celestial Muqarnas Dome & Oculus | Desert Onyx',
+    descAr: 'قبة مقرنصات ملكية ذات 6 طبقات متدلية وعين مركزية (Oculus) تتدفق منها أشعة الشمس الذهبية.',
+    descEn: 'Royal tiered stalactite dome with open central Oculus pouring golden sunbeams onto mirror water.',
+    city: 'riyadh',
+    geometry: {
+      formType: 'muqarnas_dome',
+      ribCount: 32,
+      twistAngle: 0,
+      spanRadius: 26,
+      heightAmplitude: 16,
+      rippleFreq: 2,
+      ribThickness: 0.8,
+      muqarnasTiers: 6,
+      wireframe: false,
+      showSkeleton: true,
+      feaStressMode: false
+    },
+    material: 'desert_onyx',
+    kineticMode: 'harmonic_wave',
+    timeOfDay: 12.0
+  },
   alula: {
     id: 'alula',
-    nameAr: 'واحة العُلا | مظلة الكثبان',
-    nameEn: 'AlUla Oasis Canopy',
+    nameAr: 'واحة العُلا | حجر العلا الذهبي',
+    nameEn: 'AlUla Oasis | Golden Sandstone',
     descAr: 'هيكل جيوديسي متموج يحاكي تضاريس وادي العُلا مع واجهة شمسية تحمي من الإشعاع المباشر.',
     descEn: 'Undulating geodesic shell with dynamic kinetic solar shading.',
     city: 'alula',
@@ -36,20 +86,21 @@ const PRESETS: Record<string, PresetModel> = {
       heightAmplitude: 14,
       rippleFreq: 3,
       ribThickness: 0.8,
+      muqarnasTiers: 5,
       wireframe: false,
       showSkeleton: true,
       feaStressMode: false
     },
-    material: 'desert_sandstone',
+    material: 'alula_sandstone',
     kineticMode: 'solar_tracking',
     timeOfDay: 13.5
   },
   riyadh: {
     id: 'riyadh',
-    nameAr: 'جناح الابتكار | الرياض كابيتال',
-    nameEn: 'Riyadh Innovation Pavilion',
+    nameAr: 'جناح الابتكار | تيتانيوم الذهب الوردي',
+    nameEn: 'Innovation Hub | Rose-Gold Titanium',
     descAr: 'شريط تورس التوائي فائق الحداثة بواجهات حركية ذكية مستجيبة لحركة الشمس في نجد.',
-    descEn: 'Futuristic twisted hyperbolic torus ribbon pavilion.',
+    descEn: 'Futuristic twisted hyperbolic torus ribbon pavilion with rose-gold titanium skin.',
     city: 'riyadh',
     geometry: {
       formType: 'twisted_torus',
@@ -59,18 +110,19 @@ const PRESETS: Record<string, PresetModel> = {
       heightAmplitude: 16,
       rippleFreq: 4,
       ribThickness: 1.0,
+      muqarnasTiers: 5,
       wireframe: false,
       showSkeleton: true,
       feaStressMode: false
     },
-    material: 'cyber_titanium',
+    material: 'rose_gold_titanium',
     kineticMode: 'harmonic_wave',
     timeOfDay: 12.0
   },
   jeddah: {
     id: 'jeddah',
-    nameAr: 'صدفة المرجان | واجهة جدة',
-    nameEn: 'Jeddah Coral Shell',
+    nameAr: 'صدفة المرجان | زجاج نقي ساحلي',
+    nameEn: 'Coral Shell | Clear Coastal Glass',
     descAr: 'قبو سلسلي منحني مستوحى من كائنات البحر الأحمر مع زجاج عالي الشفافية ومقاومة للرطوبة.',
     descEn: 'Curved catenary rib vault with low-iron structural glass.',
     city: 'jeddah',
@@ -82,6 +134,7 @@ const PRESETS: Record<string, PresetModel> = {
       heightAmplitude: 11,
       rippleFreq: 2,
       ribThickness: 0.6,
+      muqarnasTiers: 4,
       wireframe: false,
       showSkeleton: true,
       feaStressMode: false
@@ -92,8 +145,8 @@ const PRESETS: Record<string, PresetModel> = {
   },
   abha: {
     id: 'abha',
-    nameAr: 'برج الضباب وسحاب عسير | أبها',
-    nameEn: 'Abha Mist Tower Pavilion',
+    nameAr: 'برج الضباب وسحاب عسير | برونز معماري',
+    nameEn: 'Mist Tower & Asir Pavilion | Architectural Bronze',
     descAr: 'مظلة جيبية شاهقة مصممة لاقتناص التيارات الهوائية الجبلية في مرتفعات عسير الشاهقة.',
     descEn: 'Sinusoidal canopy engineered to capture mountain wind drafts.',
     city: 'abha',
@@ -105,6 +158,7 @@ const PRESETS: Record<string, PresetModel> = {
       heightAmplitude: 18,
       rippleFreq: 5,
       ribThickness: 1.2,
+      muqarnasTiers: 5,
       wireframe: false,
       showSkeleton: true,
       feaStressMode: false
@@ -118,18 +172,19 @@ const PRESETS: Record<string, PresetModel> = {
 class MimarApp {
   private lang: Language = 'ar';
   private currentCity: CityKey = 'alula';
-  private currentMaterial: MaterialKey = 'desert_sandstone';
+  private currentMaterial: MaterialKey = 'carrara_marble';
   private timeOfDay: number = 13.5;
   private windSpeedKmh: number = 45;
 
   private parametricParams: ParametricParams = {
-    formType: 'geodesic_shell',
-    ribCount: 38,
-    twistAngle: 25,
-    spanRadius: 30,
+    formType: 'muqarnas_vault',
+    ribCount: 36,
+    twistAngle: 0,
+    spanRadius: 28,
     heightAmplitude: 14,
     rippleFreq: 3,
     ribThickness: 0.8,
+    muqarnasTiers: 5,
     wireframe: false,
     showSkeleton: true,
     feaStressMode: false
@@ -155,6 +210,7 @@ class MimarApp {
   private acousticEngine!: AcousticEngine;
   private feaSimulator!: StructuralFEASimulator;
   private dossierModal!: DossierModal;
+  private objExporter: OBJExporter = new OBJExporter();
 
   // Active Three.js scene instances
   private currentMeshOutput: ParametricMeshOutput | null = null;
@@ -183,10 +239,9 @@ class MimarApp {
   }
 
   /**
-   * Regenerates or morphs the 3D parametric pavilion
+   * Regenerates the 3D parametric pavilion mesh & skeleton
    */
   private updateParametricMesh(): void {
-    // Remove previous mesh and skeleton
     if (this.currentMeshOutput) {
       this.sceneManager.scene.remove(this.currentMeshOutput.mesh);
       this.sceneManager.scene.remove(this.currentMeshOutput.skeletonGroup);
@@ -204,6 +259,13 @@ class MimarApp {
 
     if (this.parametricParams.showSkeleton) {
       this.sceneManager.scene.add(this.currentMeshOutput.skeletonGroup);
+    }
+
+    // Toggle Muqarnas Tiers slider visibility based on formType
+    const tiersGroup = document.getElementById('grp-muqarnas-tiers');
+    if (tiersGroup) {
+      const isMuqarnas = this.parametricParams.formType === 'muqarnas_vault' || this.parametricParams.formType === 'muqarnas_dome';
+      tiersGroup.style.display = isMuqarnas ? 'flex' : 'none';
     }
 
     this.updateAcousticsAndFEA();
@@ -238,7 +300,7 @@ class MimarApp {
   }
 
   /**
-   * Calculates Sabine RT60 and Wind FEA Stress
+   * Calculates Sabine RT60, Wind FEA Stress, and Instant BOQ metrics
    */
   private updateAcousticsAndFEA(): void {
     if (!this.currentMeshOutput) return;
@@ -256,13 +318,14 @@ class MimarApp {
       matProps
     );
 
-    // Update UI Elements
+    // Update Acoustics UI
     const rt60El = document.getElementById('val-rt60-num');
     if (rt60El) rt60El.innerHTML = `${acoustic.rt60Seconds} <span>${this.lang === 'ar' ? 'ثانية' : 'sec'}</span>`;
 
     const rt60BadgeEl = document.getElementById('val-rt60-badge');
     if (rt60BadgeEl) rt60BadgeEl.textContent = this.lang === 'ar' ? acoustic.qualityBadgeAr : acoustic.qualityBadgeEn;
 
+    // HUD Indicators
     const hudAreaEl = document.getElementById('hud-val-area');
     if (hudAreaEl) hudAreaEl.textContent = `${this.currentMeshOutput.surfaceAreaM2} m²`;
 
@@ -275,7 +338,7 @@ class MimarApp {
       hudStressEl.style.color = fea.safetyFactor >= 2.0 ? 'var(--accent-emerald)' : 'var(--accent-gold)';
     }
 
-    // Octave bars heights
+    // Octave bars
     const maxBar = Math.max(0.1, acoustic.octaveRT60.hz125, acoustic.octaveRT60.hz250, acoustic.octaveRT60.hz500, acoustic.octaveRT60.hz1000, acoustic.octaveRT60.hz2000, acoustic.octaveRT60.hz4000);
     this.setBarHeight('bar-125', acoustic.octaveRT60.hz125, maxBar);
     this.setBarHeight('bar-250', acoustic.octaveRT60.hz250, maxBar);
@@ -297,18 +360,24 @@ class MimarApp {
       safetyEl.style.color = fea.safetyFactor >= 2.0 ? 'var(--accent-emerald)' : 'var(--accent-crimson)';
     }
 
-    // Material spec card
-    const matDensityEl = document.getElementById('val-mat-density');
-    if (matDensityEl) matDensityEl.textContent = `${matProps.densityKgM3} kg/m³`;
+    // Tab 4 Quick BOQ Calculator Updates
+    const structuralVolM3 = Math.round(this.currentMeshOutput.volumeM3 * 0.16 * 10) / 10;
+    const totalMassKg = Math.round(structuralVolM3 * matProps.densityKgM3);
+    const totalMassTons = Math.round(totalMassKg / 100) / 10;
+    const totalCarbonTons = Math.round((totalMassKg * (matProps.embodiedCarbonKgCO2 / 1000.0)) / 100) / 10;
+    const carbonSavedTons = Math.round((totalCarbonTons * 0.38) * 10) / 10;
 
-    const matCarbonEl = document.getElementById('val-mat-carbon');
-    if (matCarbonEl) matCarbonEl.textContent = `${matProps.embodiedCarbonKgCO2} kgCO₂/m³`;
+    const boqVolEl = document.getElementById('val-boq-vol');
+    if (boqVolEl) boqVolEl.textContent = `${structuralVolM3} m³`;
 
-    const matThermalEl = document.getElementById('val-mat-thermal');
-    if (matThermalEl) matThermalEl.textContent = `${matProps.thermalCondW_mK} W/m·K`;
+    const boqMassEl = document.getElementById('val-boq-mass');
+    if (boqMassEl) boqMassEl.textContent = `${totalMassTons} ${this.lang === 'ar' ? 'طن' : 'tons'}`;
 
-    const matAlphaEl = document.getElementById('val-mat-alpha');
-    if (matAlphaEl) matAlphaEl.textContent = `${matProps.avgAlpha}`;
+    const boqCarbonEl = document.getElementById('val-boq-carbon');
+    if (boqCarbonEl) boqCarbonEl.textContent = `${totalCarbonTons} ${this.lang === 'ar' ? 'طن CO₂' : 'tons CO₂'}`;
+
+    const boqSavedEl = document.getElementById('val-boq-saved');
+    if (boqSavedEl) boqSavedEl.textContent = `${carbonSavedTons} ${this.lang === 'ar' ? 'طن CO₂' : 'tons CO₂'}`;
   }
 
   private setBarHeight(id: string, val: number, max: number): void {
@@ -319,10 +388,37 @@ class MimarApp {
   }
 
   /**
+   * Downloads the current 3D pavilion as a standard Wavefront OBJ file
+   */
+  private exportOBJFile(): void {
+    if (!this.currentMeshOutput) return;
+
+    try {
+      const result = this.objExporter.parse(this.currentMeshOutput.mesh);
+      const blob = new Blob([result], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `MIMAR_${this.parametricParams.formType}_${this.currentMaterial}.obj`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+      // Celebration confetti
+      confetti({
+        particleCount: 70,
+        spread: 60,
+        origin: { y: 0.7 },
+        colors: ['#d97706', '#38bdf8', '#10b981', '#f59e0b']
+      });
+    } catch (e) {
+      console.error('Failed to export OBJ', e);
+    }
+  }
+
+  /**
    * Binds UI events and user interactions
    */
   private bindDOMEvents(): void {
-    // Tab Switching in Studio Panel
+    // Tab Switching across all 4 Specialized Tabs
     const tabButtons = document.querySelectorAll<HTMLButtonElement>('.panel-tab-btn');
     tabButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -350,10 +446,17 @@ class MimarApp {
       this.kineticParams.mode = p.kineticMode;
       this.timeOfDay = p.timeOfDay;
 
-      // Update inputs
+      // Update Form Inputs
       (document.getElementById('select-form-type') as HTMLSelectElement).value = p.geometry.formType;
       (document.getElementById('slider-rib-count') as HTMLInputElement).value = String(p.geometry.ribCount);
       document.getElementById('val-rib-count')!.textContent = String(p.geometry.ribCount);
+
+      if (p.geometry.muqarnasTiers) {
+        const tiersSlider = document.getElementById('slider-muqarnas-tiers') as HTMLInputElement;
+        if (tiersSlider) tiersSlider.value = String(p.geometry.muqarnasTiers);
+        const tiersBadge = document.getElementById('val-muqarnas-tiers');
+        if (tiersBadge) tiersBadge.textContent = `${p.geometry.muqarnasTiers} ${this.lang === 'ar' ? 'طبقات' : 'tiers'}`;
+      }
 
       (document.getElementById('slider-span-radius') as HTMLInputElement).value = String(p.geometry.spanRadius);
       document.getElementById('val-span-radius')!.textContent = `${p.geometry.spanRadius} m`;
@@ -393,10 +496,16 @@ class MimarApp {
       this.updateSolarAndEnvironment();
     });
 
-    // Parametric Geometry Controls
+    // Form Type Selector
     const formSelect = document.getElementById('select-form-type') as HTMLSelectElement;
     formSelect?.addEventListener('change', () => {
       this.parametricParams.formType = formSelect.value as GeometryType;
+      this.updateParametricMesh();
+    });
+
+    // Muqarnas Tiers Slider
+    this.bindRangeSlider('slider-muqarnas-tiers', 'val-muqarnas-tiers', ` ${this.lang === 'ar' ? 'طبقات' : 'tiers'}`, (val) => {
+      this.parametricParams.muqarnasTiers = val;
       this.updateParametricMesh();
     });
 
@@ -460,7 +569,7 @@ class MimarApp {
       this.kineticParams.waveSpeed = val;
     });
 
-    // Materials Cards
+    // Materials Cards (9 Luxury PBR Finishes)
     document.querySelectorAll('.material-card').forEach((card) => {
       card.addEventListener('click', () => {
         document.querySelectorAll('.material-card').forEach((c) => c.classList.remove('active'));
@@ -524,8 +633,16 @@ class MimarApp {
       this.applyLanguage();
     });
 
-    // Open BOQ Technical Dossier Modal
-    document.getElementById('btn-open-dossier')?.addEventListener('click', () => {
+    // 3D OBJ Export Buttons (both in header nav and Tab 4)
+    document.getElementById('btn-export-obj-nav')?.addEventListener('click', () => {
+      this.exportOBJFile();
+    });
+    document.getElementById('btn-download-obj')?.addEventListener('click', () => {
+      this.exportOBJFile();
+    });
+
+    // Open BOQ Technical Dossier Modal (both in header nav and Tab 4)
+    const openDossierHandler = () => {
       if (!this.currentMeshOutput) return;
 
       const matProps = MATERIAL_SPECS[this.currentMaterial];
@@ -550,7 +667,10 @@ class MimarApp {
         this.kineticFacade.getPanelCount(),
         this.timeOfDay
       );
-    });
+    };
+
+    document.getElementById('btn-open-dossier')?.addEventListener('click', openDossierHandler);
+    document.getElementById('btn-open-dossier-tab')?.addEventListener('click', openDossierHandler);
 
     // Mouse Tracking for Kinetic Facade
     window.addEventListener('mousemove', (e) => {
@@ -589,8 +709,8 @@ class MimarApp {
     const titleTxt = document.getElementById('app-title-txt');
     if (titleTxt) {
       titleTxt.innerHTML = isAr
-        ? `مِـعْـمار <span style="font-size: 11px; opacity: 0.6; font-family: var(--font-en); font-weight: 400;">| MIMAR</span>`
-        : `MIMAR <span style="font-size: 11px; opacity: 0.6; font-family: var(--font-ar); font-weight: 400;">| مِـعْـمار</span>`;
+        ? `مِـعْـمار <span class="brand-sub-badge">| MIMAR ATELIER</span>`
+        : `MIMAR <span class="brand-sub-badge">| ATELIER</span>`;
     }
 
     const creatorTag = document.getElementById('creator-tag-txt');
@@ -602,18 +722,18 @@ class MimarApp {
     const langBtn = document.getElementById('btn-toggle-lang');
     if (langBtn) langBtn.textContent = isAr ? 'English' : 'العربية';
 
-    // Tabs
+    // 4 Tabs
     const tabGeom = document.getElementById('tab-btn-geom');
     if (tabGeom) tabGeom.textContent = t.tabGeometry;
 
-    const tabKinetic = document.getElementById('tab-btn-kinetic');
-    if (tabKinetic) tabKinetic.textContent = t.tabKinetic;
-
-    const tabMat = document.getElementById('tab-btn-materials');
-    if (tabMat) tabMat.textContent = t.tabMaterials;
+    const tabMuqarnas = document.getElementById('tab-btn-muqarnas');
+    if (tabMuqarnas) tabMuqarnas.textContent = t.tabMuqarnas;
 
     const tabSim = document.getElementById('tab-btn-sim');
     if (tabSim) tabSim.textContent = t.tabSimulation;
+
+    const tabAcademy = document.getElementById('tab-btn-academy');
+    if (tabAcademy) tabAcademy.textContent = t.tabAcademy;
 
     // HUD Labels
     const hudArea = document.getElementById('hud-lbl-area');

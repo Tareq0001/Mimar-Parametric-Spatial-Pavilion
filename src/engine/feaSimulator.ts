@@ -32,7 +32,19 @@ export class StructuralFEASimulator {
     let elasticityE_GPa = 30; // Concrete default
     let yieldStressMPa = 35;  // Concrete compressive/shear limit
 
-    if (material.key === 'brushed_bronze') {
+    if (material.key === 'carrara_marble') {
+      elasticityE_GPa = 65;
+      yieldStressMPa = 90;
+    } else if (material.key === 'desert_onyx') {
+      elasticityE_GPa = 55;
+      yieldStressMPa = 70;
+    } else if (material.key === 'alula_sandstone') {
+      elasticityE_GPa = 24;
+      yieldStressMPa = 32;
+    } else if (material.key === 'rose_gold_titanium') {
+      elasticityE_GPa = 120;
+      yieldStressMPa = 480;
+    } else if (material.key === 'brushed_bronze') {
       elasticityE_GPa = 110;
       yieldStressMPa = 180;
     } else if (material.key === 'cyber_titanium') {
@@ -41,9 +53,6 @@ export class StructuralFEASimulator {
     } else if (material.key === 'low_iron_glass') {
       elasticityE_GPa = 70;
       yieldStressMPa = 45;
-    } else if (material.key === 'desert_sandstone') {
-      elasticityE_GPa = 22;
-      yieldStressMPa = 28;
     } else if (material.key === 'biopolymer_membrane') {
       elasticityE_GPa = 5;
       yieldStressMPa = 25;

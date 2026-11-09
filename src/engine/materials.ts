@@ -2,6 +2,106 @@ import * as THREE from 'three';
 import { MaterialKey, MaterialProperties } from '../types';
 
 export const MATERIAL_SPECS: Record<MaterialKey, MaterialProperties> = {
+  carrara_marble: {
+    key: 'carrara_marble',
+    nameAr: 'رخام كرارا الإيطالي الأبيض المعرق',
+    nameEn: 'Italian White Carrara Veined Marble',
+    densityKgM3: 2700,
+    embodiedCarbonKgCO2: 140,
+    roughness: 0.14,
+    metalness: 0.04,
+    transmission: 0.08,
+    ior: 1.54,
+    alpha125: 0.01,
+    alpha250: 0.01,
+    alpha500: 0.01,
+    alpha1000: 0.02,
+    alpha2000: 0.02,
+    alpha4000: 0.02,
+    avgAlpha: 0.015,
+    thermalCondW_mK: 2.8,
+    colorHex: 0xf8fafc
+  },
+  desert_onyx: {
+    key: 'desert_onyx',
+    nameAr: 'أونيكس الصحراء الشفاف المصقول',
+    nameEn: 'Polished Translucent Desert Onyx',
+    densityKgM3: 2600,
+    embodiedCarbonKgCO2: 160,
+    roughness: 0.08,
+    metalness: 0.03,
+    transmission: 0.52,
+    ior: 1.58,
+    alpha125: 0.01,
+    alpha250: 0.02,
+    alpha500: 0.02,
+    alpha1000: 0.02,
+    alpha2000: 0.03,
+    alpha4000: 0.03,
+    avgAlpha: 0.022,
+    thermalCondW_mK: 2.1,
+    colorHex: 0xfde68a
+  },
+  alula_sandstone: {
+    key: 'alula_sandstone',
+    nameAr: 'حجر العلا الرملي الذهبي الأصيل',
+    nameEn: 'Authentic AlUla Golden Sandstone',
+    densityKgM3: 2200,
+    embodiedCarbonKgCO2: 95,
+    roughness: 0.82,
+    metalness: 0.06,
+    transmission: 0.0,
+    ior: 1.52,
+    alpha125: 0.04,
+    alpha250: 0.05,
+    alpha500: 0.07,
+    alpha1000: 0.08,
+    alpha2000: 0.10,
+    alpha4000: 0.12,
+    avgAlpha: 0.076,
+    thermalCondW_mK: 1.15,
+    colorHex: 0xd97706
+  },
+  rose_gold_titanium: {
+    key: 'rose_gold_titanium',
+    nameAr: 'تيتانيوم الذهب الوردي المعماري',
+    nameEn: 'Architectural Rose-Gold Titanium',
+    densityKgM3: 4500,
+    embodiedCarbonKgCO2: 420,
+    roughness: 0.18,
+    metalness: 0.95,
+    transmission: 0.0,
+    ior: 2.6,
+    alpha125: 0.01,
+    alpha250: 0.01,
+    alpha500: 0.01,
+    alpha1000: 0.01,
+    alpha2000: 0.02,
+    alpha4000: 0.02,
+    avgAlpha: 0.013,
+    thermalCondW_mK: 24.5,
+    colorHex: 0xe0a990
+  },
+  brushed_bronze: {
+    key: 'brushed_bronze',
+    nameAr: 'برونز معماري مفرش إسلامي',
+    nameEn: 'Brushed Islamic Architectural Bronze',
+    densityKgM3: 8800,
+    embodiedCarbonKgCO2: 450,
+    roughness: 0.25,
+    metalness: 0.88,
+    transmission: 0.0,
+    ior: 2.2,
+    alpha125: 0.01,
+    alpha250: 0.01,
+    alpha500: 0.01,
+    alpha1000: 0.02,
+    alpha2000: 0.02,
+    alpha4000: 0.02,
+    avgAlpha: 0.015,
+    thermalCondW_mK: 60.0,
+    colorHex: 0xc27803
+  },
   concrete_brutalist: {
     key: 'concrete_brutalist',
     nameAr: 'خرسانة بروتاليزم معمارية',
@@ -21,46 +121,6 @@ export const MATERIAL_SPECS: Record<MaterialKey, MaterialProperties> = {
     avgAlpha: 0.02,
     thermalCondW_mK: 1.4,
     colorHex: 0x9ca3af
-  },
-  desert_sandstone: {
-    key: 'desert_sandstone',
-    nameAr: 'حجر رملي ترافيرتين صحراوي',
-    nameEn: 'Desert Travertine Sandstone',
-    densityKgM3: 2200,
-    embodiedCarbonKgCO2: 180,
-    roughness: 0.75,
-    metalness: 0.08,
-    transmission: 0.0,
-    ior: 1.55,
-    alpha125: 0.03,
-    alpha250: 0.04,
-    alpha500: 0.06,
-    alpha1000: 0.07,
-    alpha2000: 0.09,
-    alpha4000: 0.10,
-    avgAlpha: 0.065,
-    thermalCondW_mK: 1.2,
-    colorHex: 0xd4a373
-  },
-  brushed_bronze: {
-    key: 'brushed_bronze',
-    nameAr: 'برونز معماري مفرش ذهبي',
-    nameEn: 'Brushed Architectural Bronze',
-    densityKgM3: 8800,
-    embodiedCarbonKgCO2: 450,
-    roughness: 0.28,
-    metalness: 0.88,
-    transmission: 0.0,
-    ior: 2.2,
-    alpha125: 0.01,
-    alpha250: 0.01,
-    alpha500: 0.01,
-    alpha1000: 0.02,
-    alpha2000: 0.02,
-    alpha4000: 0.02,
-    avgAlpha: 0.015,
-    thermalCondW_mK: 60.0,
-    colorHex: 0xd97706
   },
   cyber_titanium: {
     key: 'cyber_titanium',
@@ -129,11 +189,10 @@ export class MaterialManager {
   private stressMaterial: THREE.MeshStandardMaterial;
 
   constructor() {
-    // Vertex colored material for FEA stress visualization
     this.stressMaterial = new THREE.MeshStandardMaterial({
       vertexColors: true,
-      roughness: 0.3,
-      metalness: 0.1,
+      roughness: 0.32,
+      metalness: 0.12,
       side: THREE.DoubleSide
     });
   }
@@ -144,11 +203,10 @@ export class MaterialManager {
       return this.stressMaterial;
     }
 
-    const cachedKey = key;
-    let mat = this.cache.get(cachedKey);
+    let mat = this.cache.get(key);
     if (!mat) {
       mat = this.createPBRMaterial(key);
-      this.cache.set(cachedKey, mat);
+      this.cache.set(key, mat);
     }
 
     if (mat instanceof THREE.MeshStandardMaterial || mat instanceof THREE.MeshPhysicalMaterial) {
@@ -160,6 +218,48 @@ export class MaterialManager {
   private createPBRMaterial(key: MaterialKey): THREE.Material {
     const spec = MATERIAL_SPECS[key];
 
+    if (key === 'carrara_marble') {
+      return new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(spec.colorHex),
+        roughness: spec.roughness,
+        metalness: spec.metalness,
+        transmission: spec.transmission,
+        ior: spec.ior,
+        clearcoat: 0.85,
+        clearcoatRoughness: 0.06,
+        reflectivity: 0.75,
+        side: THREE.DoubleSide
+      });
+    }
+
+    if (key === 'desert_onyx') {
+      return new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(spec.colorHex),
+        roughness: spec.roughness,
+        metalness: spec.metalness,
+        transmission: spec.transmission,
+        ior: spec.ior,
+        transparent: true,
+        opacity: 0.88,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.04,
+        emissive: new THREE.Color(0xf59e0b),
+        emissiveIntensity: 0.06,
+        side: THREE.DoubleSide
+      });
+    }
+
+    if (key === 'rose_gold_titanium') {
+      return new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(spec.colorHex),
+        roughness: spec.roughness,
+        metalness: spec.metalness,
+        clearcoat: 0.5,
+        clearcoatRoughness: 0.15,
+        side: THREE.DoubleSide
+      });
+    }
+
     if (key === 'low_iron_glass') {
       return new THREE.MeshPhysicalMaterial({
         color: new THREE.Color(spec.colorHex),
@@ -169,9 +269,9 @@ export class MaterialManager {
         ior: spec.ior,
         transparent: true,
         opacity: 0.85,
-        reflectivity: 0.9,
+        reflectivity: 0.95,
         clearcoat: 1.0,
-        clearcoatRoughness: 0.05,
+        clearcoatRoughness: 0.03,
         side: THREE.DoubleSide
       });
     }
@@ -200,7 +300,6 @@ export class MaterialManager {
       });
     }
 
-    // Concrete & Sandstone
     return new THREE.MeshStandardMaterial({
       color: new THREE.Color(spec.colorHex),
       roughness: spec.roughness,
